@@ -1,0 +1,1 @@
+export const updateIconText=(t,e,n=".value")=>{const o=t.querySelector(n);!o||(o.textContent=e)},getAllSlotted=(t,e)=>{const n=`slot[name="${e}"]`,o=t.shadowRoot.querySelector(n);return o?o.children:[]},getSlotted=(t,e)=>getAllSlotted(t,e)[0];
