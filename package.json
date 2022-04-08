@@ -2,8 +2,14 @@
   "name": "media-chrome",
   "version": "0.6.5",
   "description": "Custom elements (web components) for making audio and video player controls that look great in your website or app.",
-  "main": "dist/index.js",
-  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
+  "browser": "dist/index.js",
+  "unpkg": "dist/iife/index.js",
+  "exports": {
+    "require": "./dist/cjs/index.js",
+    "import": "./dist/index.js"
+  },
   "files": [
     "dist/*",
     "README.md",
