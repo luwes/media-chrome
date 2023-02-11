@@ -8,67 +8,37 @@ const template = document.createElement('template');
 template.innerHTML = `
   <style>
   :host {
-    display: inline-flex;
-    position: relative;
-    padding: var(--media-control-padding, 10px);
-    background: var(--media-control-background, rgba(20,20,30, 0.7));
-  }
-  ${/*
-    Only show outline when keyboard focusing.
-    https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo
-  */''}
-  :host(:focus-within) {
-    box-shadow: inset 0 0 0 2px rgba(27, 127, 204, 0.9);
-    outline: 0;
+    display: contents;
   }
 
-  ${/*
-   * hide default focus ring, particularly when using mouse
-   */''}
-  ::slotted(*),
-  media-chrome-button,
-  :host(:where(:focus)) {
-    box-shadow: none;
-    outline: 0;
-  }
-
-  :host(:hover:not([disabled])) {
-    background: var(--media-control-hover-background, rgba(50,50,70, 0.7));
-  }
-
-  .wrapper {
+  [name="listbox"] {
+    display: flex;
+    width: 0;
     position: relative;
   }
 
-  media-chrome-button,
-  ::slotted(media-chrome-button),
-  ::slotted(media-captions-button) {
-    padding: 0;
-    background: transparent;
+  [name="listbox"][hidden] {
+    display: none;
   }
 
   [name="listbox"]::slotted(*),
   media-chrome-listbox {
     position: absolute;
-    bottom: 44px;
+    bottom: 100%;
     max-height: 300px;
     overflow: hidden auto;
   }
-
-  media-chrome-button:not(:focus-visible) {
-    outline: none;
-  }
   </style>
 
-  <slot name="button">
-    <media-chrome-button aria-haspopup="listbox">
-      <slot name="button-content"></slot>
-    </media-chrome-button>
-  </slot>
   <slot name="listbox" hidden>
     <media-chrome-listbox id="listbox" part="listbox">
       <slot></slot>
     </media-chrome-listbox>
+  </slot>
+  <slot name="button">
+    <media-chrome-button aria-haspopup="listbox">
+      <slot name="button-content"></slot>
+    </media-chrome-button>
   </slot>
 `;
 
@@ -165,10 +135,7 @@ class MediaChromeMenuButton extends window.HTMLElement {
     // if the menu is hidden, skip updating the menu position
     if (this.#listbox.offsetWidth === 0) return;
 
-    const padding = window.getComputedStyle(this).getPropertyValue('--media-control-padding') || 10;
-
     const buttonRect = this.#button.getBoundingClientRect();
-
 
     // if we're outside of the controller,
     // one of the components should have a media-controller attribute
@@ -177,30 +144,28 @@ class MediaChromeMenuButton extends window.HTMLElement {
       this.hasAttribute('media-controller') ||
       this.#button.hasAttribute('media-controller') ||
       this.#listbox.hasAttribute('media-controller') ||
-      !this.#buttonSlotted) {
+      !this.#buttonSlotted
+    ) {
       this.#listbox.style.zIndex = '1';
       this.#listbox.style.bottom = 'unset';
-      this.#listbox.style.top = (padding * 2 + buttonRect.height) + 'px'
-      this.#listbox.style.translate = `-${padding}px`;
+      this.#listbox.style.top = buttonRect.height + 'px'
       return;
     }
 
-    const leftOffset = buttonRect.x;
-
-    // Get the element that enforces the bounds for the time range boxes.
+    // Get the element that enforces the bounds for the list boxes.
     const bounds =
       (this.getAttribute('bounds')
         ? closestComposedNode(this, `#${this.getAttribute('bounds')}`)
         : this.parentElement) ?? this;
-    let parentOffset = bounds.getBoundingClientRect().x;
 
-    if (this.#listbox.offsetWidth + leftOffset - parentOffset > bounds.offsetWidth) {
-      const offset = this.#listbox.offsetWidth + leftOffset + buttonRect.width;
-      const overflow = bounds.offsetWidth + parentOffset + (padding * 2) - offset;
-      this.#listbox.style.translate = overflow + 'px';
-    } else {
-      this.#listbox.style.translate = `-${buttonRect.width}px`;
-    }
+    const boundsRect = bounds.getBoundingClientRect();
+    const listboxRect = this.#listbox.getBoundingClientRect();
+    const offset = (listboxRect.width - buttonRect.width) / 2;
+    let position = -offset;
+    position -= Math.max(buttonRect.x + offset + buttonRect.width - boundsRect.right, 0);
+    position += Math.max(-buttonRect.x + offset + boundsRect.x, 0);
+
+    this.#listbox.style.transform = `translateX(${position}px)`;
   }
 
   #toggleExpanded() {
