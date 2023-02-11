@@ -8,37 +8,29 @@ const template = document.createElement('template');
 template.innerHTML = `
   <style>
   :host {
-    display: contents;
-  }
-
-  [name="listbox"] {
-    display: flex;
-    width: 0;
+    display: inline-block;
     position: relative;
-  }
-
-  [name="listbox"][hidden] {
-    display: none;
   }
 
   [name="listbox"]::slotted(*),
   media-chrome-listbox {
     position: absolute;
+    left: 0;
     bottom: 100%;
     max-height: 300px;
     overflow: hidden auto;
   }
   </style>
 
-  <slot name="listbox" hidden>
-    <media-chrome-listbox id="listbox" part="listbox">
-      <slot></slot>
-    </media-chrome-listbox>
-  </slot>
   <slot name="button">
     <media-chrome-button aria-haspopup="listbox">
       <slot name="button-content"></slot>
     </media-chrome-button>
+  </slot>
+  <slot name="listbox" hidden>
+    <media-chrome-listbox id="listbox" part="listbox">
+      <slot></slot>
+    </media-chrome-listbox>
   </slot>
 `;
 
