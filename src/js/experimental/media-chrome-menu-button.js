@@ -153,10 +153,8 @@ class MediaChromeMenuButton extends window.HTMLElement {
 
     const boundsRect = bounds.getBoundingClientRect();
     const listboxRect = this.#listbox.getBoundingClientRect();
-    const offset = (listboxRect.width - buttonRect.width) / 2;
-    let position = -offset;
-    position -= Math.max(buttonRect.x + offset + buttonRect.width - boundsRect.right, 0);
-    position += Math.max(-buttonRect.x + offset + boundsRect.x, 0);
+    let position = -Math.max(buttonRect.x + listboxRect.width - boundsRect.right, 0);
+
 
     this.#listbox.style.transform = `translateX(${position}px)`;
   }
