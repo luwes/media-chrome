@@ -11,7 +11,6 @@ template.innerHTML = `
     padding: 0.5em;
     margin: 0em;
     cursor: pointer;
-    white-space: nowrap;
   }
 
   ::slotted:not(:focus-visible) {

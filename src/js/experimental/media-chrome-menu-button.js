@@ -8,8 +8,9 @@ const template = document.createElement('template');
 template.innerHTML = `
   <style>
   :host {
-    display: inline-block;
+    display: inline-flex;
     position: relative;
+    flex-shrink: .5;
   }
 
   [name="listbox"]::slotted(*),
