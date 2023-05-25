@@ -1,6 +1,6 @@
 {
-  "name": "media-chrome",
-  "version": "1.0.0-rc.4",
+  "name": "@luwes/media-chrome",
+  "version": "0.0.1-alpha.1",
   "description": "Custom elements (web components) for making audio and video player controls that look great in your website or app.",
   "author": "@muxinc",
   "license": "MIT",
@@ -9,7 +9,16 @@
     "url": "https://github.com/muxinc/media-chrome/issues"
   },
   "type": "module",
-  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/index.js"
+    },
+    "./react": {
+      "import": "./dist/react/index.js"
+    }
+  },
   "customElements": "dist/custom-elements.json",
   "files": [
     "src",
