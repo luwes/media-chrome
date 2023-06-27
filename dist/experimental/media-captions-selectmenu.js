@@ -1,0 +1,30 @@
+import MediaChromeSelectMenu from "./media-chrome-selectmenu.js";
+import "../media-captions-button.js";
+import "./media-captions-listbox.js";
+import { globalThis, document } from "../utils/server-safe-globals.js";
+class MediaCaptionsSelectMenu extends MediaChromeSelectMenu {
+  constructor() {
+    super();
+  }
+  init() {
+    const captionsButton = document.createElement("media-captions-button");
+    captionsButton.part.add("button");
+    captionsButton.preventClick = true;
+    const captionsListbox = document.createElement("media-captions-listbox");
+    captionsListbox.part.add("listbox");
+    captionsListbox.setAttribute("exportparts", "listitem");
+    const buttonSlot = this.shadowRoot.querySelector("slot[name=button]");
+    const listboxSlot = this.shadowRoot.querySelector("slot[name=listbox]");
+    buttonSlot.textContent = "";
+    listboxSlot.textContent = "";
+    buttonSlot.append(captionsButton);
+    listboxSlot.append(captionsListbox);
+  }
+}
+if (!globalThis.customElements.get("media-captions-selectmenu")) {
+  globalThis.customElements.define("media-captions-selectmenu", MediaCaptionsSelectMenu);
+}
+var media_captions_selectmenu_default = MediaCaptionsSelectMenu;
+export {
+  media_captions_selectmenu_default as default
+};
