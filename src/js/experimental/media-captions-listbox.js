@@ -5,25 +5,14 @@ import { MediaUIAttributes, MediaUIEvents } from '../constants.js';
 import { parseTextTracksStr, formatTextTrackObj } from '../utils/captions.js';
 import { toggleSubsCaps } from '../utils/captions.js';
 
-const captionsIndicatorInlineStyle = `
-  fill: var(--media-icon-color, var(--media-primary-color, rgb(238 238 238)));
-  height: var(--media-captions-indicator-height, 1em);
-  vertical-align: var(--media-captions-indicator-vertical-align, bottom);
-  margin-inline-start: 1ch;
-`;
-
 const ccIcon = /*html*/`
-<svg style="${captionsIndicatorInlineStyle}" aria-hidden="true" viewBox="0 0 26 24">
+<svg aria-hidden="true" viewBox="0 0 26 24">
   <path d="M22.83 5.68a2.58 2.58 0 0 0-2.3-2.5c-3.62-.24-11.44-.24-15.06 0a2.58 2.58 0 0 0-2.3 2.5c-.23 4.21-.23 8.43 0 12.64a2.58 2.58 0 0 0 2.3 2.5c3.62.24 11.44.24 15.06 0a2.58 2.58 0 0 0 2.3-2.5c.23-4.21.23-8.43 0-12.64Zm-11.39 9.45a3.07 3.07 0 0 1-1.91.57 3.06 3.06 0 0 1-2.34-1 3.75 3.75 0 0 1-.92-2.67 3.92 3.92 0 0 1 .92-2.77 3.18 3.18 0 0 1 2.43-1 2.94 2.94 0 0 1 2.13.78c.364.359.62.813.74 1.31l-1.43.35a1.49 1.49 0 0 0-1.51-1.17 1.61 1.61 0 0 0-1.29.58 2.79 2.79 0 0 0-.5 1.89 3 3 0 0 0 .49 1.93 1.61 1.61 0 0 0 1.27.58 1.48 1.48 0 0 0 1-.37 2.1 2.1 0 0 0 .59-1.14l1.4.44a3.23 3.23 0 0 1-1.07 1.69Zm7.22 0a3.07 3.07 0 0 1-1.91.57 3.06 3.06 0 0 1-2.34-1 3.75 3.75 0 0 1-.92-2.67 3.88 3.88 0 0 1 .93-2.77 3.14 3.14 0 0 1 2.42-1 3 3 0 0 1 2.16.82 2.8 2.8 0 0 1 .73 1.31l-1.43.35a1.49 1.49 0 0 0-1.51-1.21 1.61 1.61 0 0 0-1.29.58A2.79 2.79 0 0 0 15 12a3 3 0 0 0 .49 1.93 1.61 1.61 0 0 0 1.27.58 1.44 1.44 0 0 0 1-.37 2.1 2.1 0 0 0 .6-1.15l1.4.44a3.17 3.17 0 0 1-1.1 1.7Z"/>
 </svg>`;
 
+
 const slotTemplate = document.createElement('template');
 slotTemplate.innerHTML = /*html*/`
-  <style>
-    media-chrome-option {
-      white-space: var(--media-captions-listbox-white-space, nowrap);
-    }
-  </style>
   <slot hidden name="captions-indicator">${ccIcon}</slot>
 `;
 
@@ -43,11 +32,6 @@ const compareTracks = (a, b) => {
  * @cssproperty --media-captions-listbox-white-space - `white-space` of captions list item.
  */
 class MediaCaptionsListbox extends MediaChromeListbox {
-  #subs = [];
-  #offOption;
-  /** @type {Element} */
-  #captionsIndicator;
-
   static get observedAttributes() {
     return [
       ...super.observedAttributes,
@@ -57,42 +41,25 @@ class MediaCaptionsListbox extends MediaChromeListbox {
     ];
   }
 
+  /** @type {Element} */
+  #captionsIndicator;
+  /** @type {Element} */
+  #selectedIndicator;
+  #subs = [];
+  #offOption;
+
   constructor() {
     super({ slotTemplate });
 
-    const offOption = document.createElement('media-chrome-option');
+    this.#selectedIndicator = this.getSlottedIndicator('selected-indicator');
+    this.#captionsIndicator = this.getSlottedIndicator('captions-indicator');
 
+    const offOption = document.createElement('media-chrome-option');
     offOption.part.add('option');
     offOption.value = 'off';
-    offOption.textContent = 'Off';
+    offOption.innerHTML = '<span>Off</span>';
+    offOption.prepend(this.#selectedIndicator.cloneNode(true));
     this.#offOption = offOption;
-
-    /** @type {HTMLSlotElement} */
-    const captionsIndicatorSlot = this.shadowRoot.querySelector('[name="captions-indicator"]')
-
-    this.#captionsIndicator = captionsIndicatorSlot.firstElementChild;
-    captionsIndicatorSlot.addEventListener('slotchange', () => {
-      let els = captionsIndicatorSlot.assignedElements();
-
-      // slotted svg from outside of media-captions-selectmenu
-      if (els.length === 1 && els[0].nodeName.toLowerCase() === 'slot') {
-        const assignedElements = /** @type {HTMLSlotElement} */(els[0]).assignedElements();
-
-        if (assignedElements.length === 0) {
-          this.#captionsIndicator = /** @type {HTMLSlotElement} */(els[0]).firstElementChild;
-        } else if (assignedElements.length === 1) {
-          this.#captionsIndicator = assignedElements[0]
-        }
-      }
-
-      if (!this.#captionsIndicator) {
-        this.#captionsIndicator = captionsIndicatorSlot.firstElementChild;
-      }
-
-      this.#captionsIndicator = /** @type {Element} */(this.#captionsIndicator.cloneNode(true));
-      this.#captionsIndicator.removeAttribute('slot');
-      this.#captionsIndicator.setAttribute('style', captionsIndicatorInlineStyle);
-    });
   }
 
   attributeChangedCallback(attrName, oldValue, newValue) {
@@ -169,13 +136,13 @@ class MediaCaptionsListbox extends MediaChromeListbox {
 
       if (!option) {
         option = document.createElement('media-chrome-option');
+        option.prepend(this.#selectedIndicator.cloneNode(true));
         alreadyInDom = false;
 
         option.part.add('option');
         option.value = formatTextTrackObj(track);
 
         const label = document.createElement('span');
-
         label.textContent = track.label;
         option.append(label);
 

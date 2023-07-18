@@ -4,15 +4,6 @@ import { globalThis, document } from '../utils/server-safe-globals.js';
 import { parseRenditionList } from '../utils/utils.js';
 import { MediaUIAttributes, MediaUIEvents } from '../constants.js';
 
-const slotTemplate = document.createElement('template');
-slotTemplate.innerHTML = /*html*/`
-  <style>
-    media-chrome-option {
-      white-space: var(--media-rendition-listbox-white-space, nowrap);
-    }
-  </style>
-`;
-
 /**
  * @attr {string} mediarenditionselected - (read-only) Set to the enabled rendition.
  * @attr {string} mediarenditionlist - (read-only) Set to the rendition list.
@@ -20,10 +11,6 @@ slotTemplate.innerHTML = /*html*/`
  * @cssproperty --media-rendition-listbox-white-space - `white-space` of playback rate list item.
  */
 class MediaRenditionListbox extends MediaChromeListbox {
-  #autoOption;
-  #renditionList = [];
-  #prevState;
-
   static get observedAttributes() {
     return [
       ...super.observedAttributes,
@@ -32,14 +19,22 @@ class MediaRenditionListbox extends MediaChromeListbox {
     ];
   }
 
+  /** @type {Element} */
+  #selectedIndicator;
+  #autoOption;
+  #renditionList = [];
+  #prevState;
+
   constructor() {
-    super({ slotTemplate });
+    super();
+
+    this.#selectedIndicator = this.getSlottedIndicator('selected-indicator');
 
     const autoOption = document.createElement('media-chrome-option');
-
     autoOption.part.add('option');
     autoOption.value = 'auto';
-    autoOption.textContent = 'Auto';
+    autoOption.innerHTML = '<span>Auto</span>';
+    autoOption.prepend(this.#selectedIndicator.cloneNode(true));
     this.#autoOption = autoOption;
   }
 
@@ -119,7 +114,10 @@ class MediaRenditionListbox extends MediaChromeListbox {
       const option = document.createElement('media-chrome-option');
       option.part.add('option');
       option.value = `${rendition.id}`;
-      option.textContent = `${Math.min(rendition.width, rendition.height)}p`;
+
+      const label = document.createElement('span');
+      label.textContent = `${Math.min(rendition.width, rendition.height)}p`;
+      option.append(label);
 
       if (rendition.enabled && !isAuto) {
         option.setAttribute('aria-selected', 'true');
@@ -127,6 +125,7 @@ class MediaRenditionListbox extends MediaChromeListbox {
         option.setAttribute('aria-selected', 'false');
       }
 
+      option.prepend(this.#selectedIndicator.cloneNode(true));
       container.append(option);
     }
   }
