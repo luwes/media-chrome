@@ -152,4 +152,5 @@ if (!globalThis.customElements.get('media-chrome-option')) {
   globalThis.customElements.define('media-chrome-option', MediaChromeOption);
 }
 
+export { MediaChromeOption };
 export default MediaChromeOption;

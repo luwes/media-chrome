@@ -6,6 +6,23 @@ const checkIcon = /*html*/`
   <path fill="currentColor" d="m10 15.17 9.193-9.191 1.414 1.414-10.606 10.606-6.364-6.364 1.414-1.414 4.95 4.95Z"/>
 </svg>`;
 
+export function createOption(text, value, selected) {
+  const option = document.createElement('media-chrome-option');
+  option.part.add('option');
+  option.value = value;
+
+  if (selected) {
+    option.setAttribute('aria-selected', 'true');
+  } else {
+    option.setAttribute('aria-selected', 'false');
+  }
+
+  const label = document.createElement('span');
+  label.textContent = text;
+  option.append(label);
+
+  return option;
+}
 
 const template = document.createElement('template');
 template.innerHTML = /*html*/`
@@ -443,4 +460,5 @@ if (!globalThis.customElements.get('media-chrome-listbox')) {
   globalThis.customElements.define('media-chrome-listbox', MediaChromeListbox);
 }
 
+export { MediaChromeListbox };
 export default MediaChromeListbox;

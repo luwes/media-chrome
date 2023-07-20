@@ -1,8 +1,8 @@
-import MediaChromeListbox from './media-chrome-listbox.js';
+import { MediaChromeListbox, createOption } from './media-chrome-listbox.js';
 import './media-chrome-option.js';
 import { DEFAULT_RATES, DEFAULT_RATE } from '../media-playback-rate-button.js';
 import { MediaUIAttributes, MediaUIEvents } from '../constants.js';
-import { document, globalThis } from '../utils/server-safe-globals.js';
+import { globalThis } from '../utils/server-safe-globals.js';
 import { getNumericAttr, setNumericAttr } from '../utils/element-utils.js';
 import { AttributeTokenList } from '../utils/attribute-token-list.js';
 
@@ -94,20 +94,7 @@ class MediaPlaybackRateListbox extends MediaChromeListbox {
 
     for (const rate of this.rates) {
       /** @type {HTMLOptionElement} */
-      const option = document.createElement('media-chrome-option');
-      option.part.add('option');
-      option.value = rate;
-
-      const label = document.createElement('span');
-      label.textContent = `${rate}x`;
-      option.append(label);
-
-      if (this.mediaPlaybackRate == rate) {
-        option.setAttribute('aria-selected', 'true');
-      } else {
-        option.setAttribute('aria-selected', 'false');
-      }
-
+      const option = createOption(`${rate}x`, rate, this.mediaPlaybackRate == rate);
       option.prepend(this.#selectedIndicator.cloneNode(true));
       container.append(option);
     }

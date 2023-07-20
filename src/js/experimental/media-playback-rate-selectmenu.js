@@ -1,4 +1,4 @@
-import MediaChromeSelectMenu from './media-chrome-selectmenu.js';
+import { MediaChromeSelectMenu } from './media-chrome-selectmenu.js';
 import '../media-playback-rate-button.js';
 import './media-playback-rate-listbox.js';
 import { globalThis, document, } from '../utils/server-safe-globals.js';

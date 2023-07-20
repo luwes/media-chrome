@@ -1,4 +1,4 @@
-import MediaChromeListbox from './media-chrome-listbox.js';
+import { MediaChromeListbox, createOption } from './media-chrome-listbox.js';
 import './media-chrome-option.js';
 import { globalThis, document } from '../utils/server-safe-globals.js';
 import { MediaUIAttributes, MediaUIEvents } from '../constants.js';
@@ -54,10 +54,7 @@ class MediaCaptionsListbox extends MediaChromeListbox {
     this.#selectedIndicator = this.getSlottedIndicator('selected-indicator');
     this.#captionsIndicator = this.getSlottedIndicator('captions-indicator');
 
-    const offOption = document.createElement('media-chrome-option');
-    offOption.part.add('option');
-    offOption.value = 'off';
-    offOption.innerHTML = '<span>Off</span>';
+    const offOption = createOption('Off', 'off');
     offOption.prepend(this.#selectedIndicator.cloneNode(true));
     this.#offOption = offOption;
   }
@@ -126,46 +123,6 @@ class MediaCaptionsListbox extends MediaChromeListbox {
     return oldItems.filter(track => !removedTracks.includes(track)).concat(newTracks);
   }
 
-  #renderTracks(tracks) {
-    const container = this.shadowRoot.querySelector('slot');
-
-    tracks.forEach(track => {
-      let option = track.el;
-      let alreadyInDom = true;
-      const type = track.kind ?? 'subs';
-
-      if (!option) {
-        option = document.createElement('media-chrome-option');
-        option.prepend(this.#selectedIndicator.cloneNode(true));
-        alreadyInDom = false;
-
-        option.part.add('option');
-        option.value = formatTextTrackObj(track);
-
-        const label = document.createElement('span');
-        label.textContent = track.label;
-        option.append(label);
-
-        // add CC icon for captions
-        if (type === 'captions') {
-          option.append(this.#captionsIndicator.cloneNode(true));
-        }
-      }
-
-
-      if (track.selected) {
-        option.setAttribute('aria-selected', 'true');
-      } else {
-        option.setAttribute('aria-selected', 'false');
-      }
-
-      if (!alreadyInDom) {
-        container.append(option);
-        track.el = option;
-      }
-    });
-  }
-
   #render() {
     const container = this.shadowRoot.querySelector('slot');
     if (!container.contains(this.#offOption)) {
@@ -181,6 +138,39 @@ class MediaCaptionsListbox extends MediaChromeListbox {
     }
 
     this.#renderTracks(this.#subs);
+  }
+
+  #renderTracks(tracks) {
+    const container = this.shadowRoot.querySelector('slot');
+
+    tracks.forEach(track => {
+      let option = track.el;
+      let alreadyInDom = true;
+      const type = track.kind ?? 'subs';
+
+      if (!option) {
+        alreadyInDom = false;
+
+        option = createOption(track.label, formatTextTrackObj(track));
+        option.prepend(this.#selectedIndicator.cloneNode(true));
+
+        // add CC icon for captions
+        if (type === 'captions') {
+          option.append(this.#captionsIndicator.cloneNode(true));
+        }
+      }
+
+      if (track.selected) {
+        option.setAttribute('aria-selected', 'true');
+      } else {
+        option.setAttribute('aria-selected', 'false');
+      }
+
+      if (!alreadyInDom) {
+        container.append(option);
+        track.el = option;
+      }
+    });
   }
 
   #onChange() {
