@@ -21,7 +21,6 @@ class MediaRenditionListbox extends MediaChromeListbox {
 
   /** @type {Element} */
   #selectedIndicator;
-  #autoOption;
   #renditionList = [];
   #prevState;
 
@@ -29,10 +28,6 @@ class MediaRenditionListbox extends MediaChromeListbox {
     super();
 
     this.#selectedIndicator = this.getSlottedIndicator('selected-indicator');
-
-    const autoOption = createOption('Auto', 'auto');
-    autoOption.prepend(this.#selectedIndicator.cloneNode(true));
-    this.#autoOption = autoOption;
   }
 
   attributeChangedCallback(attrName, oldValue, newValue) {
@@ -50,15 +45,13 @@ class MediaRenditionListbox extends MediaChromeListbox {
   }
 
   connectedCallback() {
-    this.addEventListener('change', this.#onChange);
-
     super.connectedCallback();
+    this.addEventListener('change', this.#onChange);
   }
 
   disconnectedCallback() {
-    this.removeEventListener('change', this.#onChange);
-
     super.disconnectedCallback();
+    this.removeEventListener('change', this.#onChange);
   }
 
   get mediaRenditionList() {
@@ -66,8 +59,6 @@ class MediaRenditionListbox extends MediaChromeListbox {
   }
 
   set mediaRenditionList(list) {
-    this.removeAttribute(MediaUIAttributes.MEDIA_RENDITION_LIST);
-
     this.#renditionList = list;
     this.#render();
   }
@@ -77,8 +68,6 @@ class MediaRenditionListbox extends MediaChromeListbox {
   }
 
   set mediaRenditionSelected(rendition) {
-    this.removeAttribute(MediaUIAttributes.MEDIA_RENDITION_SELECTED);
-
     this.value = rendition?.id;
   }
 
@@ -92,18 +81,11 @@ class MediaRenditionListbox extends MediaChromeListbox {
     const container = this.shadowRoot.querySelector('slot');
     container.textContent = '';
 
-    if (!container.contains(this.#autoOption)) {
-      container.append(this.#autoOption);
-    }
-
     let isAuto = !this.mediaRenditionSelected;
-    if (isAuto) {
-      this.#autoOption.setAttribute('aria-selected', 'true');
-      this.#autoOption.setAttribute('tabindex', '0');
-    } else {
-      this.#autoOption.setAttribute('aria-selected', 'false');
-      this.#autoOption.setAttribute('tabindex', '-1');
-    }
+
+    const option = createOption('Auto', 'auto', isAuto);
+    option.prepend(this.#selectedIndicator.cloneNode(true));
+    container.append(option);
 
     for (const rendition of renditionList) {
 

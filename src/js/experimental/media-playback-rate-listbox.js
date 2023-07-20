@@ -78,13 +78,11 @@ class MediaPlaybackRateListbox extends MediaChromeListbox {
 
   connectedCallback() {
     super.connectedCallback();
-
     this.addEventListener('change', this.#onChange);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-
     this.removeEventListener('change', this.#onChange);
   }
 
@@ -93,6 +91,7 @@ class MediaPlaybackRateListbox extends MediaChromeListbox {
     container.textContent = '';
 
     for (const rate of this.rates) {
+
       /** @type {HTMLOptionElement} */
       const option = createOption(`${rate}x`, rate, this.mediaPlaybackRate == rate);
       option.prepend(this.#selectedIndicator.cloneNode(true));
