@@ -148,7 +148,7 @@ class MediaCaptionsListbox extends MediaChromeListbox {
 
       /** @type {HTMLOptionElement} */
       const option = createOption(
-        this.formatOptionText(subs.label),
+        this.formatOptionText(subs.label, subs),
         formatTextTrackObj(subs),
         this.value == formatTextTrackObj(subs),
       );

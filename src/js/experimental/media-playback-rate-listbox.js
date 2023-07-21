@@ -94,7 +94,7 @@ class MediaPlaybackRateListbox extends MediaChromeListbox {
 
       /** @type {HTMLOptionElement} */
       const option = createOption(
-        this.formatOptionText(`${rate}x`),
+        this.formatOptionText(`${rate}x`, rate),
         rate,
         this.mediaPlaybackRate == rate
       );

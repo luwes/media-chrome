@@ -89,9 +89,14 @@ class MediaRenditionListbox extends MediaChromeListbox {
 
     for (const rendition of renditionList) {
 
+      const text = this.formatOptionText(
+        `${Math.min(rendition.width, rendition.height)}p`,
+        rendition
+      );
+
       /** @type {HTMLOptionElement} */
       const option = createOption(
-        this.formatOptionText(`${Math.min(rendition.width, rendition.height)}p`),
+        text,
         `${rendition.id}`,
         rendition.enabled && !isAuto
       );

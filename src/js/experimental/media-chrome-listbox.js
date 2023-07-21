@@ -97,6 +97,10 @@ class MediaChromeListbox extends globalThis.HTMLElement {
     return ['disabled', MediaStateReceiverAttributes.MEDIA_CONTROLLER];
   }
 
+  static formatOptionText(text) {
+    return text;
+  }
+
   #keysSoFar = '';
   #clearKeysTimeout = null;
   #slot;
@@ -147,15 +151,9 @@ class MediaChromeListbox extends globalThis.HTMLElement {
     });
   }
 
-  formatOptionText(text) {
+  formatOptionText(text, data) {
     // @ts-ignore
-    const format = this.constructor.formatOptionText;
-
-    if (typeof format === 'function') {
-      return format(text);
-    }
-
-    return text;
+    return this.constructor.formatOptionText(text, data);
   }
 
   getSlottedIndicator(name) {
