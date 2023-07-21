@@ -34,4 +34,5 @@ if (!globalThis.customElements.get('media-rendition-selectmenu')) {
   globalThis.customElements.define('media-rendition-selectmenu', MediaRenditionSelectMenu);
 }
 
+export { MediaRenditionSelectMenu };
 export default MediaRenditionSelectMenu;

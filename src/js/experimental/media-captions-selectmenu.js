@@ -34,4 +34,5 @@ if (!globalThis.customElements.get('media-captions-selectmenu')) {
   globalThis.customElements.define('media-captions-selectmenu', MediaCaptionsSelectMenu);
 }
 
+export { MediaCaptionsSelectMenu };
 export default MediaCaptionsSelectMenu;

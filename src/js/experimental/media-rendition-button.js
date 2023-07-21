@@ -65,4 +65,5 @@ if (!globalThis.customElements.get('media-rendition-button')) {
   globalThis.customElements.define('media-rendition-button', MediaRenditionButton);
 }
 
+export { MediaRenditionButton };
 export default MediaRenditionButton;

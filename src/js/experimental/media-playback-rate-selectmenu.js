@@ -34,4 +34,5 @@ if (!globalThis.customElements.get('media-playback-rate-selectmenu')) {
   globalThis.customElements.define('media-playback-rate-selectmenu', MediaPlaybackRateSelectMenu);
 }
 
+export { MediaPlaybackRateSelectMenu };
 export default MediaPlaybackRateSelectMenu;
