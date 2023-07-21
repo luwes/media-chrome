@@ -138,7 +138,7 @@ class MediaCaptionsListbox extends MediaChromeListbox {
 
     const isOff = !this.value;
 
-    const option = createOption('Off', 'off', isOff);
+    const option = createOption(this.formatOptionText('Off'), 'off', isOff);
     option.prepend(this.#selectedIndicator.cloneNode(true));
     container.append(option);
 
@@ -148,7 +148,7 @@ class MediaCaptionsListbox extends MediaChromeListbox {
 
       /** @type {HTMLOptionElement} */
       const option = createOption(
-        subs.label,
+        this.formatOptionText(subs.label),
         formatTextTrackObj(subs),
         this.value == formatTextTrackObj(subs),
       );
@@ -188,4 +188,5 @@ if (!globalThis.customElements.get('media-captions-listbox')) {
   globalThis.customElements.define('media-captions-listbox', MediaCaptionsListbox);
 }
 
+export { MediaCaptionsListbox };
 export default MediaCaptionsListbox;

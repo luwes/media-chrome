@@ -93,7 +93,11 @@ class MediaPlaybackRateListbox extends MediaChromeListbox {
     for (const rate of this.rates) {
 
       /** @type {HTMLOptionElement} */
-      const option = createOption(`${rate}x`, rate, this.mediaPlaybackRate == rate);
+      const option = createOption(
+        this.formatOptionText(`${rate}x`),
+        rate,
+        this.mediaPlaybackRate == rate
+      );
       option.prepend(this.#selectedIndicator.cloneNode(true));
       container.append(option);
     }
@@ -120,4 +124,5 @@ if (!globalThis.customElements.get('media-playback-rate-listbox')) {
   globalThis.customElements.define('media-playback-rate-listbox', MediaPlaybackRateListbox);
 }
 
+export { MediaPlaybackRateListbox };
 export default MediaPlaybackRateListbox;

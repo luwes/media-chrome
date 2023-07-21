@@ -83,7 +83,7 @@ class MediaRenditionListbox extends MediaChromeListbox {
 
     let isAuto = !this.mediaRenditionSelected;
 
-    const option = createOption('Auto', 'auto', isAuto);
+    const option = createOption(this.formatOptionText('Auto'), 'auto', isAuto);
     option.prepend(this.#selectedIndicator.cloneNode(true));
     container.append(option);
 
@@ -91,7 +91,7 @@ class MediaRenditionListbox extends MediaChromeListbox {
 
       /** @type {HTMLOptionElement} */
       const option = createOption(
-        `${Math.min(rendition.width, rendition.height)}p`,
+        this.formatOptionText(`${Math.min(rendition.width, rendition.height)}p`),
         `${rendition.id}`,
         rendition.enabled && !isAuto
       );
@@ -121,4 +121,5 @@ if (!globalThis.customElements.get('media-rendition-listbox')) {
   globalThis.customElements.define('media-rendition-listbox', MediaRenditionListbox);
 }
 
+export { MediaRenditionListbox };
 export default MediaRenditionListbox;

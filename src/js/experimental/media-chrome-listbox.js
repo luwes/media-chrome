@@ -147,6 +147,17 @@ class MediaChromeListbox extends globalThis.HTMLElement {
     });
   }
 
+  formatOptionText(text) {
+    // @ts-ignore
+    const format = this.constructor.formatOptionText;
+
+    if (typeof format === 'function') {
+      return format(text);
+    }
+
+    return text;
+  }
+
   getSlottedIndicator(name) {
     let indicator = this.querySelector(`:scope > [slot="${name}"]`);
 
