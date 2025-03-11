@@ -15,7 +15,7 @@ import { StateMediator, StateOwners } from './state-mediator.js';
 import { MediaState } from './media-store.js';
 
 export type MediaUIEventsType =
-typeof MediaUIEvents[keyof typeof MediaUIEvents];
+  typeof MediaUIEvents[keyof typeof MediaUIEvents];
 export type MediaRequestTypes = Exclude<
   MediaUIEventsType,
   | 'registermediastatereceiver'
@@ -161,13 +161,10 @@ export const requestMap: RequestMap = {
   [MediaUIEvents.MEDIA_UNMUTE_REQUEST](stateMediator, stateOwners) {
     const key = 'mediaMuted';
     const value = false;
-    const volumePref =
-      +globalThis.localStorage.getItem('media-chrome-pref-volume');
-    // If we've unmuted but the current volume is 0, restore the preferred volume or set it to some low volume
-    stateMediator.mediaVolume.set(
-      volumePref > 0.25 ? volumePref : 0.25,
-      stateOwners
-    );
+    // If we've unmuted but our volume is currently 0, automatically set it to some low volume
+    if (!stateMediator.mediaVolume.get(stateOwners)) {
+      stateMediator.mediaVolume.set(0.25, stateOwners);
+    }
     stateMediator[key].set(value, stateOwners);
   },
   [MediaUIEvents.MEDIA_VOLUME_REQUEST](stateMediator, stateOwners, { detail }) {
